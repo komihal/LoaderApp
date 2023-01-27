@@ -18,10 +18,35 @@ import streamlit as st
 #
 # # 2. The downloaded XLSX data is read with `pd.read_excel`.
 # sheet = "TDSheet"
+if "spreadsheet_id" not in st.session_state:
+    st.session_state["spreadsheet_id"] = '1O0qVHr2vkTjpGDyOao1gT1ULPDDYbYCjj0mC8fhnVVA'
+
+CREDENTIALS_FILE = "cred_service.json"
+
 tab1, tab2, tab3 = st.tabs(["Загрузка морс", "Загрузка статусов", "Загрузка еще чего-нибудь"])
+
+st.sidebar.write("Текущая ссылка на файл spreadsheet: " + "https://docs.google.com/spreadsheets/d/" + st.session_state["spreadsheet_id"])
+
 with tab1:
+
     uploaded_mors = st.file_uploader("Загрузите морс")
+
+    col2, col3 = st.columns([3, 1])
+    with col2:
+        st.text_input(
+            "Путь к гугл файлу: ", value="",
+            max_chars=None, key=None, type="default", help=None, autocomplete=None, on_change=None,
+            args=None, kwargs=None, placeholder="при необходимости введите новый  гугл ID spreadsheet", disabled=False,
+            label_visibility="collapsed")
+    with col3:
+        st.button("Обновить")
+    st.write("* при добавлении ID нового файла, заблаговременно откройте к нему доступ для служебного аккаунта: "
+             "account@databasealpha.iam.gserviceaccount.com")
+    if st.button:
+        spreadsheet_id = st.text_input
+
     if uploaded_mors:
+
         df = pd.read_excel(uploaded_mors)
 
         df.columns = df.iloc[7] # название столбцов
@@ -38,8 +63,9 @@ with tab1:
         df = df.drop(["index"], axis=1) # нумерация индексов
         df = df.fillna("")
 
-        CREDENTIALS_FILE = "cred_service.json"
-        spreadsheet_id = '1O0qVHr2vkTjpGDyOao1gT1ULPDDYbYCjj0mC8fhnVVA'
+
+
+
         credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE,
             ['https://www.googleapis.com/auth/spreadsheets',
              'https://www.googleapis.com/auth/drive'])
@@ -47,14 +73,14 @@ with tab1:
         service = apiclient.discovery.build('sheets', 'v4', http=httpAuth)
 
         response_date = service.spreadsheets().values().update(
-            spreadsheetId=spreadsheet_id,
+            spreadsheetId=st.session_state["spreadsheet_id"],
             range='A1:EE',
             valueInputOption='RAW',
             body=dict(
                 majorDimension='ROWS',
                 values=df.values.tolist()[:])
         ).execute()
-        st.write("файл обновлен по ссылке: " + "https://docs.google.com/spreadsheets/d/" + spreadsheet_id)
+        st.write("файл обновлен по ссылке: " + "https://docs.google.com/spreadsheets/d/" + st.session_state["spreadsheet_id"])
     else:
-        st.write("пожалуйста загрузите отчет")
+        st.write("")
 
