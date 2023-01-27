@@ -80,7 +80,7 @@ with tab1:
                 majorDimension='ROWS',
                 values=df.values.tolist()[:])
         ).execute()
-        st.write("файл обновлен по ссылке: " + "https://docs.google.com/spreadsheets/d/" + st.session_state["spreadsheet_id"])
+        st.write("файл обновлен по ссылке: " + "https://docs.google.com/spreadsheets/d/" + str(st.session_state["spreadsheet_id"]))
     else:
         st.write("")
 
