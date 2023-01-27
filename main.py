@@ -43,7 +43,7 @@ with tab1:
     st.write("* при добавлении ID нового файла, заблаговременно откройте к нему доступ для служебного аккаунта: "
              "account@databasealpha.iam.gserviceaccount.com")
     if st.button:
-        spreadsheet_id = st.text_input
+        st.session_state["spreadsheet_id"] = st.text_input
 
     if uploaded_mors:
 
