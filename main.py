@@ -35,7 +35,7 @@ with tab1:
     with col2:
         st.text_input(
             "Путь к гугл файлу: ", value="",
-            max_chars=None, key=None, type="default", help=None, autocomplete=None, on_change=None,
+            max_chars=None, key=None, type="default", help="при добавлении ID нового файла, заблаговременно откройте к нему доступ для служебного аккаунта: account@databasealpha.iam.gserviceaccount.com", autocomplete=None, on_change=None,
             args=None, kwargs=None, placeholder="при необходимости введите новый  гугл ID spreadsheet", disabled=False,
             label_visibility="collapsed")
     with col3:
