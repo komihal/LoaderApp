@@ -14,6 +14,5 @@ bcrypt==4.0.1
 pyyaml==6.0
 jinja2 ==3.0.0
 google==3.0.0
-apiclient==1.0.4
 lasio==0.30
 google-api-python-client==2.73
