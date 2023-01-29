@@ -18,6 +18,10 @@ import streamlit as st
 #
 # # 2. The downloaded XLSX data is read with `pd.read_excel`.
 # sheet = "TDSheet"
+
+def link_to_id():
+    st.session_state["spreadsheet_id"] = st.session_state["link"]
+
 if "spreadsheet_id" not in st.session_state:
     st.session_state["spreadsheet_id"] = '1O0qVHr2vkTjpGDyOao1gT1ULPDDYbYCjj0mC8fhnVVA'
 if "link" not in st.session_state:
@@ -26,10 +30,10 @@ if "link" not in st.session_state:
 CREDENTIALS_FILE = "cred_service.json"
 
 tab1, tab2, tab3 = st.tabs(["Загрузка морс", "Загрузка статусов", "Загрузка еще чего-нибудь"])
-if st.session_state["link"] != "":
-    st.sidebar.write("Текущая ссылка на файл spreadsheet: " + "https://docs.google.com/spreadsheets/d/" + st.session_state["link"])
-else:
+if st.session_state["link"] == "":
     st.sidebar.write("Текущая ссылка на файл spreadsheet: " + "https://docs.google.com/spreadsheets/d/" + st.session_state["spreadsheet_id"])
+else:
+    st.sidebar.write("Текущая ссылка на файл spreadsheet: " + "https://docs.googlei.com/spreadsheets/d/" + st.session_state["link"])
 
 with tab1:
 
@@ -43,11 +47,9 @@ with tab1:
             args=None, kwargs=None, placeholder="при необходимости введите новый  гугл ID spreadsheet", disabled=False,
             label_visibility="collapsed")
     with col3:
-        st.button("Обновить")
+        st.button("Обновить", on_click=link_to_id)
     st.write("* при добавлении ID нового файла, заблаговременно откройте к нему доступ для служебного аккаунта: "
              "account@databasealpha.iam.gserviceaccount.com")
-    if st.button:
-        st.session_state["spreadsheet_id"] = st.session_state["link"]
     if uploaded_mors:
 
         df = pd.read_excel(uploaded_mors)
@@ -66,6 +68,7 @@ with tab1:
         df = df.fillna("")
 
         try:
+            st.write("ссылка"+st.session_state["spreadsheet_id"])
             credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE,
                 ['https://www.googleapis.com/auth/spreadsheets',
                  'https://www.googleapis.com/auth/drive'])
