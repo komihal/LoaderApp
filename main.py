@@ -1,12 +1,10 @@
-from pydrive.auth import GoogleAuth
-import requests
-from io import BytesIO
 import pandas as pd
 import numpy as np
 from oauth2client.service_account import ServiceAccountCredentials
 import httplib2
 import apiclient.discovery
 import streamlit as st
+import time
 
 
 # # 1. Download the XLSX data.
@@ -21,11 +19,14 @@ import streamlit as st
 
 def link_to_id():
     st.session_state["spreadsheet_id"] = st.session_state["link"]
+    st.sidebar.success("ссылка обновлена на: " + "https://docs.google.com/spreadsheets/d/" + st.session_state[
+        "spreadsheet_id"], icon="✅")
 
 if "spreadsheet_id" not in st.session_state:
     st.session_state["spreadsheet_id"] = '1O0qVHr2vkTjpGDyOao1gT1ULPDDYbYCjj0mC8fhnVVA'
 if "link" not in st.session_state:
     st.session_state["link"] = ""
+
 
 CREDENTIALS_FILE = "cred_service.json"
 
@@ -37,7 +38,7 @@ else:
 
 with tab1:
 
-    uploaded_mors = st.file_uploader("Загрузите морс")
+    uploaded_mors = st.file_uploader("Загрузка начнется после перетаскивания файла в бокс ⬇⬇⬇:")
 
     col2, col3 = st.columns([3, 1])
     with col2:
@@ -48,10 +49,9 @@ with tab1:
             label_visibility="collapsed")
     with col3:
         st.button("Обновить", on_click=link_to_id)
-    st.write("* при добавлении ID нового файла, заблаговременно откройте к нему доступ для служебного аккаунта: "
-             "account@databasealpha.iam.gserviceaccount.com")
+    st.info("* при добавлении ID новой гугл-таблицы, откройте к ней доступ для служебного аккаунта: "
+             "account@databasealpha.iam.gserviceaccount.com , иначе загрузка не выполнится!")
     if uploaded_mors:
-
         df = pd.read_excel(uploaded_mors)
         df.columns = df.iloc[7] # название столбцов
         df = df.dropna(axis=1, how='all')  # дроп пустых
@@ -68,7 +68,6 @@ with tab1:
         df = df.fillna("")
 
         try:
-            st.write("ссылка"+st.session_state["spreadsheet_id"])
             credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE,
                 ['https://www.googleapis.com/auth/spreadsheets',
                  'https://www.googleapis.com/auth/drive'])
@@ -83,9 +82,11 @@ with tab1:
                     majorDimension='ROWS',
                     values=df.values.tolist()[:])
             ).execute()
-            st.write("файл обновлен по ссылке: " + "https://docs.google.com/spreadsheets/d/" + st.session_state["spreadsheet_id"])
+            st.success("файл обновлен по ссылке: " + "https://docs.google.com/spreadsheets/d/" + st.session_state[
+                "spreadsheet_id"], icon="✅")
+            my_bar = st.progress(0)
         except:
-            st.write("Неудача!!! попробуй поменять ID таблицы или открыть доступ к ней служебному аккаунту account@databasealpha.iam.gserviceaccount.com")
+            st.error("Не фартануло! Не верный ID таблицы или доступ служебному аккаунту account@databasealpha.iam.gserviceaccount.com не предоставлен!")
     else:
-        st.write("")
+        st.info("* после загрузки файла дождитесь уведомления.")
 
