@@ -56,16 +56,19 @@ with tab1:
         df.columns = df.iloc[7] # название столбцов
         df = df.dropna(axis=1, how='all')  # дроп пустых
         df = df.drop(df.index[0:7])  # дроп первых 8
-        except_list = np.append(df["Объекты строительства"].unique()[1:], ["Итого",
-                                                                           "Недостаточно прав для детализации"])  # список исключения для рядов (итого, назв об, недосткаточно)
+        except_list = np.append(df["Объекты строительства"].unique()[2:], ["Итого",
+                                                                           "Недостаточно прав для детализации"])  # список исключения для рядов
+        st.write(except_list)
         df = df[~df['№ заявки на оплату'].isin(except_list)]  # дроп списка
         df.drop(df.tail(3).index, inplace=True)  # дроп хвост
         df = df.dropna(axis=1, how='all') # сброс нулевых
-        df = df.iloc[:, :21]  # дроп правых столбцов
+        df = df.iloc[:, :20]  # дроп правых столбцов
         df = df.reset_index() # сброс индексов
         df.index = df.index + 1 # нумерация индексов
         df = df.drop(["index"], axis=1) # нумерация индексов
         df = df.fillna("")
+
+        st.write(except_list)
 
         try:
             credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE,
