@@ -61,7 +61,7 @@ with tab1:
         df = df[~df['№ заявки на оплату'].isin(except_list)]  # дроп списка
         df.drop(df.tail(3).index, inplace=True)  # дроп хвост
         df = df.dropna(axis=1, how='all') # сброс нулевых
-        df = df.iloc[:, :-26]  # дроп правых столбцов
+        df = df.iloc[:, :21]  # дроп правых столбцов
         df = df.reset_index() # сброс индексов
         df.index = df.index + 1 # нумерация индексов
         df = df.drop(["index"], axis=1) # нумерация индексов
