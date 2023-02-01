@@ -55,7 +55,7 @@ with tab1:
         df = pd.read_excel(uploaded_mors)
         df.columns = df.iloc[7] # название столбцов
         df = df.dropna(axis=1, how='all')  # дроп пустых
-        df = df.drop(df.index[0:8])  # дроп первых 8
+        df = df.drop(df.index[0:7])  # дроп первых 8
         except_list = np.append(df["Объекты строительства"].unique()[1:], ["Итого",
                                                                            "Недостаточно прав для детализации"])  # список исключения для рядов (итого, назв об, недосткаточно)
         df = df[~df['№ заявки на оплату'].isin(except_list)]  # дроп списка
