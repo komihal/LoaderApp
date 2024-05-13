@@ -1,3 +1,3 @@
 venv
-client_secrets.json
-cred_service.json
+cred_service
+client_secrets
